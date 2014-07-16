@@ -26,6 +26,10 @@ app.get(/^\/(index\.html)?$/, function(req, res) {
   res.sendfile(__dirname +  "/index.html");
 });
 
+app.get("/favicon.ico", function(req, res) {
+  res.sendfile(__dirname +  "/favicon.ico");
+});
+
 app.get("/instruction", function(req, res) {
   res.sendfile(__dirname +  "/instruction.html");
 });
