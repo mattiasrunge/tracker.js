@@ -48,7 +48,7 @@
           $("#marker-id").text(marker.getTitle());
           $("#marker-time").html(dateToYYYYMMDDhhmmss(new Date(marker.time)));
           $("#marker-pos").text(marker.getPosition().toUrlValue());
-          $("#marker-info").show();
+          $("#marker-data").show();
           
         } else {
           selectedMarker.setAnimation(null);
@@ -56,7 +56,7 @@
           $("#marker-id").text("");
           $("#marker-time").text("");
           $("#marker-pos").text("");
-          $("#marker-info").hide();
+          $("#marker-data").hide();
         }
       }
       
@@ -119,9 +119,14 @@
   <body>
     <div id="marker-info">
       <div id="marker-info-inner">
-        <div id="marker-id"></div>
-        <div id="marker-pos"></div>
-        <div id="marker-time"></div>
+        <div id="marker-data">
+          <div id="marker-id"></div>
+          <div id="marker-pos"></div>
+          <div id="marker-time"></div>
+        </div>
+        <div>
+          <a target="blank" href="/instruction">Instruction</a>
+        </div>
       </div>
     </div>
     <div id="map-canvas"></div>
