@@ -13,6 +13,7 @@
       #marker-info-inner { background-color: white; border-radius: 3px; padding: 10px; padding-bottom: 0; font-family: "Inconsolata", sans-serif; font-size: 12px; display: inline-block; border: 1px solid #999; }
       #marker-info-inner div { margin-bottom: 10px; }
       #marker-id { font-weight: bold; font-size: 14px; }
+      #marker-data { border-bottom: 1px solid #999; }
     </style>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -95,6 +96,8 @@
         
         map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
         
+        $("#marker-data").hide();
+        
         var socket = io.connect();
         
         socket.on("position", function(data) {
@@ -123,7 +126,7 @@
           <div id="marker-time"></div>
         </div>
         <div>
-          <a target="blank" href="/instruction">Instruction</a>
+          <a target="blank" href="/instruction">Configure a new device</a>
         </div>
       </div>
     </div>
