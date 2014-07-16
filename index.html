@@ -95,8 +95,6 @@
         
         map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
         
-        $("#marker-info").hide();
-
         var socket = io.connect();
         
         socket.on("position", function(data) {
