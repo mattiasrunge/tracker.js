@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <title>Tracker.js</title>
+    <title>Live Tracker</title>
     <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
     
     <style type="text/css">
@@ -85,30 +85,6 @@
         }
       }
     
-      function update() {
-        console.log("Updating positions...");
-        
-        $.getJSON("/positions", function(data) {
-          // Update markers
-          for (var id in data) {
-            updateMarker(id, data[id]);
-          }
-        
-          // Remove markers
-          var tempMarkers = {};
-          
-          for (id in markers) {
-            if (data[id]) {
-              tempMarkers[id] = markers[id];
-            } else {
-              markers[id].setMap(null);
-            }
-          }
-          
-          markers = tempMarkers;
-        });
-      }
-    
       function initialize() {
         var mapOptions = {
           zoom: 8,
@@ -122,8 +98,18 @@
         $("#marker-info").hide();
 
         var socket = io.connect();
+        
         socket.on("position", function(data) {
           updateMarker(data.id, data.data);
+        });
+        
+        socket.on("removePosition", function(id) {
+          if (markers[id] === selectMarker) {
+            selectMarker(selectMarker);
+          }
+          
+          markers[id].setMap(null);
+          delete markers[id];
         });
       }
       

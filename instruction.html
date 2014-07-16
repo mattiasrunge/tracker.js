@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>Instructions | Live Tracker</title>
+    <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; font-family: "Inconsolata", sans-serif; font-size: 18px; }
+    </style>
+  </head>
+  <body>
+    <p>
+      Instructions on how to set up your phone to report it's position to the live tracking system.
+    </p>
+    
+    <h4>Configuration instructions</h4>
+    <ol>
+      <li>Install <a target="blank" href="https://play.google.com/store/apps/details?id=com.mendhak.gpslogger&hl=en">GPS Logger</a>.</li>
+      <li>Open settings menu from the top left.</li>
+      <li>Select <i>OpenGTS Setup</i>.</li>
+      <li>Click <i>Enable OpenGTS</i>.</li>
+      <li>Click <i>Enable Automatically Send</i>.</li>
+      <li>Click <i>Server</i> and write <strong id="server-name">SERVER NAME</strong>.</li>
+      <li>Click <i>Port</i> and write <strong id="server-port">SERVER PORT</strong>.</li>
+      <li>Click <i>Communication Method</i> and select <strong>HTTP GET</strong>.</li>
+      <li>Click <i>Server Path</i> and write <strong>/gps</strong>.</li>
+      <li>Click <i>Device ID</i> and write a descriptive name.</li>
+      <li>Go back to the main page and start the tracking with the large play icon.</li>
+    </ol>
+    
+    <h4>Please note</h4>
+    <ul>
+      <li>If no position is reported in four hours the marker will be removed.</li>
+      <li>The Device ID will be used as name, please write something short but descriptive.</li>
+      <li>Clicking a marker selects it and shows the coordinates and last update time in a box at the bottom. It also shows centers the map on each update of that device.</li>
+    </ul>
+  </body>
+  <script type="text/javascript">
+    $("#server-name").text(document.location.hostname);
+    $("#server-port").text(document.location.port);
+  </script>
+</html>

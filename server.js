@@ -26,6 +26,10 @@ app.get(/^\/(index\.html)?$/, function(req, res) {
   res.sendfile(__dirname +  "/index.html");
 });
 
+app.get("/instruction", function(req, res) {
+  res.sendfile(__dirname +  "/instruction.html");
+});
+
 app.get("/positions", function(req, res) {
   res.json(positions);
 });
@@ -81,6 +85,7 @@ app.get("/gps", function(req, res) {
     longitude: data.longitude,
     speed: data.speed,
     course: data.course,
+    expire: new Date().getTime() + 1000*60*60*4,
     time: new Date().toString()
   };
   
@@ -98,6 +103,18 @@ io.on("connection", function (socket) {
 server.listen(config.http.port);
 
 setInterval(function() {
+  var tempPositions = {};
+  
+  for (var id in positions) {
+    if (positions[id].expire < new Date().getTime()) {
+      tempPositions[id] = positions[id];
+    } else {
+      io.emit("removePosition", id);
+    }
+  }
+  
+  positions = tempPositions;
+  
   fs.writeFile("./positions.json", JSON.stringify(positions, null, 2), function(error) {
     if (error) {
       console.error("Failed to write positions file...");
