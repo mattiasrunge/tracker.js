@@ -14,7 +14,8 @@
       #marker-info-inner div { margin-bottom: 10px; }
       #marker-id { font-weight: bold; font-size: 14px; }
     </style>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
     <script type="text/javascript">
       var map = null;
@@ -120,8 +121,13 @@
         
         $("#marker-info").hide();
         
-        setInterval(update, 5000);
-        update();
+//         setInterval(update, 5000);
+//         update();
+        
+        var socket = io.connect('http://localhost');
+        socket.on("position", function(data) {
+          updateMarker(data.id, data.data);
+        });
       }
       
       google.maps.event.addDomListener(window, "load", initialize);

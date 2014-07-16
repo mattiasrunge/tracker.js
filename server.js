@@ -16,6 +16,8 @@ try {
 
 
 var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 
 app.use(bodyParser());
 app.use(compression({ threshold: 512 }));
@@ -82,6 +84,8 @@ app.get("/gps", function(req, res) {
     time: new Date().toString()
   };
   
+  io.emit("position", { id: req.query.id, data: positions[req.query.id] });
+  
   fs.writeFile("./positions.json", JSON.stringify(positions, null, 2), function(error) {
     if (error) {
       console.error("Failed to write positions file...");
@@ -93,4 +97,4 @@ app.get("/gps", function(req, res) {
   }); 
 });
 
-app.listen(config.http.port);
+server.listen(config.http.port);

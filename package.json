@@ -9,7 +9,8 @@
     "express": "4.4.5",
     "body-parser": "1.2.2",
     "compression": "1.0.8",
-    "nmea-0183": "0.0.7"
+    "nmea-0183": "0.0.7",
+    "socket.io": "1.0.6"
   },
   "devDependencies": {
   },
