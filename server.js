@@ -106,7 +106,7 @@ setInterval(function() {
   var tempPositions = {};
   
   for (var id in positions) {
-    if (positions[id].expire < new Date().getTime()) {
+    if (positions[id].expire > new Date().getTime()) {
       tempPositions[id] = positions[id];
     } else {
       io.emit("removePosition", id);
