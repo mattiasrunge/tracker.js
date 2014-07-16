@@ -124,7 +124,7 @@
 //         setInterval(update, 5000);
 //         update();
         
-        var socket = io.connect('http://localhost');
+        var socket = io.connect();
         socket.on("position", function(data) {
           updateMarker(data.id, data.data);
         });
