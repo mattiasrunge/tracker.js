@@ -16,8 +16,8 @@ try {
 
 
 var app = express();
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+var server = require("http").Server(app);
+var io = require("socket.io")(server);
 
 app.use(bodyParser());
 app.use(compression({ threshold: 512 }));
@@ -32,23 +32,23 @@ app.get("/positions", function(req, res) {
 
 app.get("/gps", function(req, res) {
   /*
-  { dev: 'Mattias Båt',
-  alt: '47.900001525878906',
-  code: '0xF020',
-  acct: 'Mattias',
-  id: 'Mattias Båt',
-  gprmc: '$GPRMC,135345,A,5740.24054,N,1156.21675,E,0.000000,0.000000,160714,,*28' }
+  { dev: "Mattias Båt",
+  alt: "47.900001525878906",
+  code: "0xF020",
+  acct: "Mattias",
+  id: "Mattias Båt",
+  gprmc: "$GPRMC,135345,A,5740.24054,N,1156.21675,E,0.000000,0.000000,160714,,*28" }
   */
   /*
-  { id: 'GPRMC',
-  time: '135816',
-  valid: 'A',
-  latitude: '57.67071100',
-  longitude: '11.93728067',
+  { id: "GPRMC",
+  time: "135816",
+  valid: "A",
+  latitude: "57.67071100",
+  longitude: "11.93728067",
   speed: 0,
   course: 0,
-  date: '160714',
-  mode: '',
+  date: "160714",
+  mode: "",
   variation: NaN }
   */
     
@@ -86,15 +86,22 @@ app.get("/gps", function(req, res) {
   
   io.emit("position", { id: req.query.id, data: positions[req.query.id] });
   
-  fs.writeFile("./positions.json", JSON.stringify(positions, null, 2), function(error) {
-    if (error) {
-      console.error("Failed to write positions file...");
-      res.send(500);
-      return;
-    }
-    
-    res.send(200);
-  }); 
+  res.send(200);
+});
+
+io.on("connection", function (socket) {
+  for (var id in positions) {
+    socket.emit("position", { id: id, data: positions[id] });
+  };
 });
 
 server.listen(config.http.port);
+
+setInterval(function() {
+  fs.writeFile("./positions.json", JSON.stringify(positions, null, 2), function(error) {
+    if (error) {
+      console.error("Failed to write positions file...");
+      return;
+    }
+  }); 
+}, 10000);

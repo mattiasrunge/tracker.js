@@ -120,10 +120,7 @@
         map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
         
         $("#marker-info").hide();
-        
-//         setInterval(update, 5000);
-//         update();
-        
+
         var socket = io.connect();
         socket.on("position", function(data) {
           updateMarker(data.id, data.data);
