@@ -1,1 +1,4 @@
-index.js
+config.json
+positions.json
+*~
+node_modules

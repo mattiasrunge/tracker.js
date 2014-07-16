@@ -1,18 +1,19 @@
 {
   "name": "tracker.js",
-  "version": "0.0.1",
-  "description": "Server for receiving GPS position data from trackers via the mobile network",
+  "version": "0.0.2",
+  "description": "Server for receiving GPS position data from trackers via the mobile network and showing them on the map.",
   "author": "Mattias Runge <mattias@runge.se>",
   "repository": { "type": "git", "url": "git://github.com/mattiasrunge/tracker.js.git" },
   "dependencies": {
-    "db-mysql": "~0.7.6"
+    "express": "4.6.1",
+    "express": "4.4.5",
+    "body-parser": "1.2.2",
+    "compression": "1.0.8",
+    "nmea-0183": "0.0.7"
   },
   "devDependencies": {
-    "mocha": "~1.1.0",
-    "should": "~0.6.3",
-    "jshint": "~0.7.1"
   },
-  "engines": { "node": ">= 0.2.0" },
-  "main": "index.js",
+  "engines": { "node": ">= 0.10.0" },
+  "main": "server.js",
   "license": "GPLv2"
 }

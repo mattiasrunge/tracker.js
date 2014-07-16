@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>Tracker.js</title>
+    <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { height: 100% }
+      #marker-info { position: fixed; right: 100px; left: 100px; bottom: 10px; z-index: 10; text-align: center; }
+      #marker-info-inner { background-color: white; border-radius: 3px; padding: 10px; padding-bottom: 0; font-family: "Inconsolata", sans-serif; font-size: 12px; display: inline-block; border: 1px solid #999; }
+      #marker-info-inner div { margin-bottom: 10px; }
+      #marker-id { font-weight: bold; font-size: 14px; }
+    </style>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript">
+      var map = null;
+      var markers = {};
+      var selectedMarker = null;
+      
+      function dateToYYYYMMDDhhmmss(date) {
+        function pad(num) {
+          num = num + "";
+          return num.length < 2 ? "0" + num : num;
+        }
+        return date.getFullYear() + "-" +
+          pad(date.getMonth() + 1) + "-" +
+          pad(date.getDate()) + " " +
+          pad(date.getHours()) + ":" +
+          pad(date.getMinutes()) + ":" +
+          pad(date.getSeconds());
+      }
+      
+      function selectMarker(marker) {
+        if (selectedMarker !== marker) {
+          if (selectedMarker) {
+            selectedMarker.setAnimation(null);
+          }
+          
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+          selectedMarker = marker;
+          
+          map.panTo(marker.getPosition());
+          $("#marker-id").text(marker.getTitle());
+          $("#marker-time").html(dateToYYYYMMDDhhmmss(new Date(marker.time)));
+          $("#marker-pos").text(marker.getPosition().toUrlValue());
+          $("#marker-info").show();
+          
+        } else {
+          selectedMarker.setAnimation(null);
+          selectedMarker = null;
+          $("#marker-id").text("");
+          $("#marker-time").text("");
+          $("#marker-pos").text("");
+          $("#marker-info").hide();
+        }
+      }
+      
+      function updateMarker(id, data) {
+        var marker = markers[id];
+        
+        if (!marker) {
+          marker = new google.maps.Marker();
+          
+          google.maps.event.addListener(marker, "click", function() {
+            selectMarker(marker);
+          });
+          
+          marker.setMap(map);
+          marker.setTitle(id);
+        }
+        
+        marker.setPosition(new google.maps.LatLng(data.latitude, data.longitude));
+        marker.time = data.time;
+          
+        markers[id] = marker;
+        
+        if (selectedMarker === marker) {
+          selectedMarker = null;
+          selectMarker(marker);
+        }
+      }
+    
+      function update() {
+        console.log("Updating positions...");
+        
+        $.getJSON("/positions", function(data) {
+          // Update markers
+          for (var id in data) {
+            updateMarker(id, data[id]);
+          }
+        
+          // Remove markers
+          var tempMarkers = {};
+          
+          for (id in markers) {
+            if (data[id]) {
+              tempMarkers[id] = markers[id];
+            } else {
+              markers[id].setMap(null);
+            }
+          }
+          
+          markers = tempMarkers;
+        });
+      }
+    
+      function initialize() {
+        var mapOptions = {
+          zoom: 8,
+          center: new google.maps.LatLng(58.355023, 11.239356),
+          mapTypeId: google.maps.MapTypeId.HYBRID,
+          streetViewControl: false
+        };
+        
+        map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+        
+        $("#marker-info").hide();
+        
+        setInterval(update, 5000);
+        update();
+      }
+      
+      google.maps.event.addDomListener(window, "load", initialize);
+    </script>
+  </head>
+  <body>
+    <div id="marker-info">
+      <div id="marker-info-inner">
+        <div id="marker-id"></div>
+        <div id="marker-pos"></div>
+        <div id="marker-time"></div>
+      </div>
+    </div>
+    <div id="map-canvas"></div>
+  </body>
+</html>

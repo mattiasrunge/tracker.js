@@ -1,3 +1,0 @@
-var trackerNS = require('./tracker');
-
-var tracker = new trackerNS.Tracker("localhost", "user", "password", "database", 1212);
