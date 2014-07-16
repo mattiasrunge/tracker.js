@@ -14,6 +14,7 @@
       #marker-info-inner div { margin-bottom: 10px; }
       #marker-id { font-weight: bold; font-size: 14px; }
       #marker-data { border-bottom: 1px solid #999; }
+      a { text-decoration: none; }
     </style>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -34,6 +35,30 @@
           pad(date.getHours()) + ":" +
           pad(date.getMinutes()) + ":" +
           pad(date.getSeconds());
+      }
+      
+      function selectOther(inc) {
+        var keys = Object.keys(markers);
+        var index = -1;
+        
+        for (var n = 0; n < keys.length; n++) {
+          if (markers[keys[n]] === selectedMarker) {
+            index = n;
+            break;
+          }
+        }
+        
+        if (index !== -1) {
+          index = inc ? index + 1 : index - 1;
+          if (index > keys.length - 1) {
+            index = 0;
+          } else if (index < 0) {
+            index = keys.length - 1;
+          }
+          console.log(index);
+          
+          selectMarker(markers[keys[index]]);
+        }
       }
       
       function selectMarker(marker) {
@@ -98,6 +123,21 @@
         
         $("#marker-data").hide();
         
+        $("#marker-previous").on("click", function() {
+          selectOther(false);
+          return false;
+        });
+        
+        $("#marker-next").on("click", function() {
+          selectOther(true);
+          return false;
+        });
+        
+        $("#marker-close").on("click", function() {
+          selectMarker(selectedMarker);
+          return false;
+        });
+        
         var socket = io.connect();
         
         socket.on("position", function(data) {
@@ -121,9 +161,18 @@
     <div id="marker-info">
       <div id="marker-info-inner">
         <div id="marker-data">
-          <div id="marker-id"></div>
+          <div>
+            <a id="marker-close" href="#">
+              <span id="marker-id"></span>
+            </a>
+          </div>
           <div id="marker-pos"></div>
           <div id="marker-time"></div>
+          <div>
+            <a id="marker-previous" href="#">&laquo;&nbsp;Prev</a>
+            &nbsp;&bull;&nbsp;
+            <a id="marker-next" href="#">Next&nbsp;&raquo;</a>
+          </div>
         </div>
         <div>
           <a target="blank" href="/instruction">Configure a new device</a>
