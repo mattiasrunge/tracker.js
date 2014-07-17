@@ -73,6 +73,7 @@
           map.panTo(marker.getPosition());
           $("#marker-id").text(marker.getTitle());
           $("#marker-time").html(dateToYYYYMMDDhhmmss(new Date(marker.time)));
+          $("#marker-who").text(marker.who);
           $("#marker-latitude").text(marker.getPosition().lat());
           $("#marker-longitude").text(marker.getPosition().lng());
           $("#marker-data").show();
@@ -88,6 +89,7 @@
           selectedMarker.setAnimation(null);
           selectedMarker = null;
           $("#marker-id").text("");
+          $("#marker-who").text("");
           $("#marker-time").text("");
           $("#marker-latitude").text("");
           $("#marker-longitude").text("");
@@ -111,6 +113,7 @@
         
         marker.setPosition(new google.maps.LatLng(data.latitude, data.longitude));
         marker.time = data.time;
+        marker.who = data.who;
           
         markers[id] = marker;
         
@@ -174,6 +177,10 @@
           <div id="marker-id"></div>
           <table style="width: 100%; text-align: left; margin-bottom: 10px;">
             <tbody>
+              <tr>
+                <td style="font-weight: bold; text-align: right; padding-right: 5px; width: 50%;">Who</td>
+                <td id="marker-who"></td>
+              </tr>
               <tr>
                 <td style="font-weight: bold; text-align: right; padding-right: 5px; width: 50%;">Latitude</td>
                 <td id="marker-latitude"></td>
