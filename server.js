@@ -59,8 +59,17 @@ app.get("/gps", function(req, res) {
   mode: "",
   variation: NaN }
   */
+  
+  var id = req.query.id;
+  var who = req.query.acct;
+  
+  if (id.indexOf("@") !== -1) {
+    var parts = id.split("@");
+    id = parts[1];
+    who = parts[0];
+  }
     
-  if (!req.query.id) {
+  if (!id) {
     console.error("No ID received in GPS data, ignoring...");
     console.error(JSON.stringify(req.query, null, 2));
     res.send(400);
@@ -84,8 +93,8 @@ app.get("/gps", function(req, res) {
     return;
   }
   
-  positions[req.query.id] = {
-    who: data.acct,
+  positions[id] = {
+    who: who,
     latitude: data.latitude,
     longitude: data.longitude,
     speed: data.speed,
@@ -94,7 +103,7 @@ app.get("/gps", function(req, res) {
     time: new Date().toString()
   };
   
-  io.emit("position", { id: req.query.id, data: positions[req.query.id] });
+  io.emit("position", { id: id, data: positions[id] });
   
   res.send(200);
 });
