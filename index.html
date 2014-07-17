@@ -3,16 +3,16 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <title>Live Tracker</title>
-    <link href="http://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
     <link rel="shortcut icon" href="/favicon.ico">
     <style type="text/css">
       html { height: 100% }
       body { height: 100%; margin: 0; padding: 0 }
       #map-canvas { height: 100% }
-      #marker-info { position: fixed; right: 100px; left: 100px; bottom: 10px; z-index: 10; text-align: center; }
-      #marker-info-inner { background-color: white; border-radius: 3px; padding: 10px; padding-bottom: 0; font-family: "Inconsolata", sans-serif; font-size: 12px; display: inline-block; border: 1px solid #999; }
+      #marker-info { position: fixed; margin-left: -160px; left: 50%; width: 320px; bottom: 10px; z-index: 10; text-align: center; }
+      #marker-info-inner { background-color: white; border-radius: 3px; padding: 10px; padding-bottom: 0; font-family: "Roboto", sans-serif; font-size: 12px; border: 1px solid #999; }
       #marker-info-inner div { margin-bottom: 10px; }
-      #marker-id { font-weight: bold; font-size: 14px; }
+      #marker-id { font-weight: bold; font-size: 18px; }
       #marker-data { border-bottom: 1px solid #999; }
       a { text-decoration: none; }
     </style>
@@ -73,15 +73,24 @@
           map.panTo(marker.getPosition());
           $("#marker-id").text(marker.getTitle());
           $("#marker-time").html(dateToYYYYMMDDhhmmss(new Date(marker.time)));
-          $("#marker-pos").text(marker.getPosition().toUrlValue());
+          $("#marker-latitude").text(marker.getPosition().lat());
+          $("#marker-longitude").text(marker.getPosition().lng());
           $("#marker-data").show();
           
+          if (Object.keys(markers).length === 1) {
+            $("#marker-next").hide();
+            $("#marker-previous").hide();
+          } else {
+            $("#marker-next").show();
+            $("#marker-previous").show();
+          }
         } else {
           selectedMarker.setAnimation(null);
           selectedMarker = null;
           $("#marker-id").text("");
           $("#marker-time").text("");
-          $("#marker-pos").text("");
+          $("#marker-latitude").text("");
+          $("#marker-longitude").text("");
           $("#marker-data").hide();
         }
       }
@@ -161,17 +170,29 @@
     <div id="marker-info">
       <div id="marker-info-inner">
         <div id="marker-data">
-          <div>
-            <a id="marker-close" href="#">
-              <span id="marker-id"></span>
-            </a>
-          </div>
-          <div id="marker-pos"></div>
-          <div id="marker-time"></div>
-          <div>
-            <a id="marker-previous" href="#">&laquo;&nbsp;Prev</a>
-            &nbsp;&bull;&nbsp;
-            <a id="marker-next" href="#">Next&nbsp;&raquo;</a>
+          
+          <div id="marker-id"></div>
+          <table style="width: 100%; text-align: left; margin-bottom: 10px;">
+            <tbody>
+              <tr>
+                <td style="font-weight: bold; text-align: right; padding-right: 5px; width: 50%;">Latitude</td>
+                <td id="marker-latitude"></td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; text-align: right; padding-right: 5px; width: 50%;">Longitude</td>
+                <td id="marker-longitude"></td>
+              </tr>
+              <tr>
+                <td style="font-weight: bold; text-align: right; padding-right: 5px; width: 50%;">Time</td>
+                <td id="marker-time"></td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div style="clear: both; text-align: center;">
+            <a id="marker-previous" href="#" style="float: left;">&laquo;&nbsp;Prev</a>
+            <a id="marker-close" href="#">Close</a>
+            <a id="marker-next" href="#" style="float: right;">Next&nbsp;&raquo;</a>
           </div>
         </div>
         <div>
