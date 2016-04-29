@@ -38,6 +38,39 @@ app.get("/positions", function(req, res) {
   res.json(positions);
 });
 
+app.get("/manual", function(req, res) {
+/*
+  { lat: '57.67076441',
+  lon: '11.93739251',
+  time: '2015-08-16T15:03:14Z',
+  s: '0.0',
+  id: 'Mattias@Tudela' }
+*/
+//   console.log(req.query);
+//   res.send(200);
+//   return;
+
+  if (req.query.id.indexOf("@") !== -1) {
+    var parts = req.query.id.split("@");
+    id = parts[1];
+    who = parts[0];
+  }
+
+  positions[id] = {
+    who: who,
+    latitude: req.query.lat,
+    longitude: req.query.lon,
+    speed: req.query.s,
+    course: 0,
+    expire: new Date().getTime() + 1000*60*60*4,
+    time: new Date().toString()
+  };
+  console.log(id, positions[id]);
+  io.emit("position", { id: id, data: positions[id] });
+
+  res.send(200);
+});
+
 app.get("/gps", function(req, res) {
   /*
   { dev: "Mattias Båt",
@@ -59,32 +92,32 @@ app.get("/gps", function(req, res) {
   mode: "",
   variation: NaN }
   */
-  
+
   var id = req.query.id;
   var who = req.query.acct;
-  
+
   if (id.indexOf("@") !== -1) {
     var parts = id.split("@");
     id = parts[1];
     who = parts[0];
   }
-    
+
   if (!id) {
     console.error("No ID received in GPS data, ignoring...");
     console.error(JSON.stringify(req.query, null, 2));
     res.send(400);
     return;
   }
-  
+
   var data = nmea.parse(req.query.gprmc);
-  
+
   if (!data) {
     console.error("No or invalid NMEA received in GPS data, ignoring...");
     console.error(JSON.stringify(req.query, null, 2));
     res.send(400);
     return;
   }
-  
+
   if (data.valid !== "A") {
     console.error("Not valid GPS data, ignoring...");
     console.error(JSON.stringify(req.query, null, 2));
@@ -92,7 +125,7 @@ app.get("/gps", function(req, res) {
     res.send(200);
     return;
   }
-  
+
   positions[id] = {
     who: who,
     latitude: data.latitude,
@@ -102,9 +135,9 @@ app.get("/gps", function(req, res) {
     expire: new Date().getTime() + 1000*60*60*4,
     time: new Date().toString()
   };
-  
+  console.log(id, positions[id]);
   io.emit("position", { id: id, data: positions[id] });
-  
+
   res.send(200);
 });
 
@@ -118,7 +151,7 @@ server.listen(config.http.port);
 
 setInterval(function() {
   var tempPositions = {};
-  
+
   for (var id in positions) {
     if (positions[id].expire > new Date().getTime()) {
       tempPositions[id] = positions[id];
@@ -126,13 +159,13 @@ setInterval(function() {
       io.emit("removePosition", id);
     }
   }
-  
+
   positions = tempPositions;
-  
+
   fs.writeFile("./positions.json", JSON.stringify(positions, null, 2), function(error) {
     if (error) {
       console.error("Failed to write positions file...");
       return;
     }
-  }); 
+  });
 }, 10000);
